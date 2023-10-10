@@ -1,0 +1,90 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#ff4020" type="ball-triangle-path" [fullScreen]="true">
+  <p style="color: #ff4020"> Loading... </p>
+</ngx-spinner>
+<section *ngIf="isLoaded">
+  <div class="row p-4">
+    <div class="col col-sm-6 text-start px-lg-5">
+      <img [routerLink]="['/']" src="assets/images/sign-up/logo.svg" width="160px" height="auto" class="onboarding-logo"
+        alt="">
+    </div>
+    <div class="col col-sm-6 text-end align-self-center">
+      <nz-select (ngModelChange)="switchLang($event)" [(ngModel)]="selectedLanguage" class="language-dropdown">
+        <nz-option *ngFor="let option of languageList" [nzLabel]="option.label" [nzValue]="option.code">
+          {{ option.label }}
+        </nz-option>
+      </nz-select>
+    </div>
+  </div>
+  <div class="bg-welcome row">
+    <div class="col text-center align-self-center">
+      <h2 class="banner-title text-white mb-0">{{'banner.welcomeMTS' | translate}}</h2>
+    </div>
+  </div>
+  <div class="container pt-4">
+    <form [formGroup]="profileForm" (ngSubmit)="submitForm()">
+      <div class="row">
+        <div class="col-12 col-md-4 text-center text-md-end">
+          <nz-upload nzName="avatar" [nzShowUploadList]="false" (nzChange)="handleChange($event)">
+            <nz-avatar class="bg-gray" [nzSize]="140" nzIcon="user" [nzSrc]="avatarUrl" accept="image/*">
+            </nz-avatar>
+            <button class="bg-black relateivly-placed" type="button" nz-button nzType="primary" nzGhost
+              [nzLoading]="isPhotoChangeLoading">
+              <i *ngIf="!isPhotoChangeLoading" class="fas fa-plus text-white"></i>
+            </button>
+          </nz-upload>
+        </div>
+        <div class="col col-md-8 text-center px-lg-5 pt-5 pt-md-0">
+          <div class="row">
+            <div class="col-6 col-sm-4 col-md-3 pb-3" *ngFor="let type of userTypeList; index as i">
+              <div class="box mx-1 bg-light-gray cursor-pointer" (click)="select(i, type)">
+                <i [ngClass]="selectedIndex == i? 'fas fa-check-circle check' : ''"></i>
+                <p class="mb-0 absolute-center color-black semi-bold text-18">{{type | translate}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row py-4">
+        <div class="col offset-md-4 col-md-8 text-end px-lg-5">
+          <div class="row justify-md-content-center">
+            <div class="d-flex">
+              <button type="button" (click)="backClicked()" class="back-btn cursor-pointer mx-3">
+                <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0)">
+                    <path
+                      d="M0.286427 11.8087C0.286718 11.8084 0.286963 11.8081 0.287304 11.8078L5.39004 6.72969C5.77231 6.34927 6.39062 6.35068 6.77114 6.73301C7.15161 7.11528 7.15015 7.73359 6.76787 8.11406L3.34189 11.5234H24.0234C24.5628 11.5234 25 11.9606 25 12.5C25 13.0394 24.5628 13.4766 24.0234 13.4766H3.34194L6.76782 16.8859C7.1501 17.2664 7.15156 17.8847 6.77109 18.267C6.39058 18.6494 5.77222 18.6507 5.38999 18.2703L0.287256 13.1922C0.286963 13.1919 0.286718 13.1916 0.286377 13.1913C-0.0960941 12.8095 -0.0948734 12.1892 0.286427 11.8087Z"
+                      fill="black" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0">
+                      <rect width="25" height="25" fill="white" transform="matrix(-1 0 0 1 25 0)" />
+                    </clipPath>
+                  </defs>
+                </svg>
+                <span class="px-2">{{'Back' | translate}}</span>
+              </button>
+            </div>
+            <div class="d-flex">
+              <button class="is-login-btn" [nzLoading]="isFormSaving" nz-button>
+                <span class="px-2">{{'Next' | translate}}</span>
+                <svg class="r-180" width="25" height="25" viewBox="0 0 25 25" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0)">
+                    <path class="fill-white"
+                      d="M0.286427 11.8087C0.286718 11.8084 0.286963 11.8081 0.287304 11.8078L5.39004 6.72969C5.77231 6.34927 6.39062 6.35068 6.77114 6.73301C7.15161 7.11528 7.15015 7.73359 6.76787 8.11406L3.34189 11.5234H24.0234C24.5628 11.5234 25 11.9606 25 12.5C25 13.0394 24.5628 13.4766 24.0234 13.4766H3.34194L6.76782 16.8859C7.1501 17.2664 7.15156 17.8847 6.77109 18.267C6.39058 18.6494 5.77222 18.6507 5.38999 18.2703L0.287256 13.1922C0.286963 13.1919 0.286718 13.1916 0.286377 13.1913C-0.0960941 12.8095 -0.0948734 12.1892 0.286427 11.8087Z"
+                      fill="black" />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0">
+                      <rect width="25" height="25" fill="white" transform="matrix(-1 0 0 1 25 0)" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

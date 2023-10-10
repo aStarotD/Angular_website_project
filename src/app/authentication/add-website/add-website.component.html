@@ -1,0 +1,112 @@
+<section>
+  <app-fluid-toolbar></app-fluid-toolbar>
+  <div class="bg-website row">
+    <div class="col text-center align-self-center">
+      <h2 class="banner-title text-white mb-0">{{'banner.website' | translate}}</h2>
+    </div>
+  </div>
+  <div class="row px-5 py-5">
+    <div class="col-auto">
+      <img src="../../../assets/images/quoter.png">
+    </div>
+    <div class="col align-self-center">
+      <h4 class="quote m-0">{{'website.quote' | translate}}</h4>
+    </div>
+  </div>
+  <div class="container-fluid px-5">
+    <div class="row">
+      <div class="col col-sm-6">
+        <form [formGroup]="websiteForm" (ngSubmit)="submitForm()" nz-form class="website-form">
+          <div class="row">
+            <div class="col-12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="{{'EnterweburlOnboarding' | translate}}" class="is-icon">
+                  <input formControlName="url" type="url" nz-input placeholder="{{'placeholder.enterURL' | translate}}">
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="{{'SelectlangOnboarding' | translate}}">
+                  <nz-select formControlName="lang" nzAllowClear
+                    nzPlaceHolder="{{'SelectlangOnboarding' | translate}} *" (ngModelChange)="languageSelected($event)">
+                    <nz-option *ngFor="let language of languageList" [nzValue]="language.code"
+                      nzLabel="{{language.label}}">
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="{{'SelectcategoryOnboarding' | translate}}">
+                  <nz-select formControlName="category" nzAllowClear
+                    nzPlaceHolder="{{'SelectcategoryOnboarding' | translate}} *">
+                    <nz-option *ngFor="let cat of categoryList" [nzValue]="cat" nzLabel="{{cat.title}}">
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="{{'SelmonthlytrafficOnboarding' | translate}}" class="is-icon">
+                  <nz-select formControlName="monthly_traffic"
+                    nzPlaceHolder="{{'SelmonthlytrafficOnboarding' | translate}} *">
+                    <nz-option *ngFor="let traffic of dailyTrafficOptions" [nzValue]="traffic.value"
+                      [nzLabel]="traffic.label">
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="{{'SelmonthlyrevenueOnboarding' | translate}}" class="is-icon">
+                  <nz-select formControlName="revenue" nzPlaceHolder="{{'SelmonthlyrevenueOnboarding' | translate}}">
+                    <nz-option *ngFor="let revenue of adRevenueOptions" [nzValue]="revenue.value"
+                      [nzLabel]="revenue.label">
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-12">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="{{'error.areaCode' | translate}}" class="is-icon">
+                  <input formControlName="phone" type="tel" nz-input placeholder="{{'placeholder.areaCode' | translate}}">
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="row pb-4">
+                <div class="col-6 text-end">
+                  <button nz-button type="button" (click)="backClicked()" class="btn-prev">
+                    <img class="pr-2" src="../../../assets/images/arrows/left.svg" alt="">
+                    {{'Back' | translate}}
+                  </button>
+                </div>
+                <div class="col-6">
+                  <button nz-button type="submit" class="btn-next" nzType="primary" [nzLoading]="isFormSaving">
+                    {{'Next' | translate}}
+                    <img class="pl-2" src="../../../assets/images/arrows/right.svg" alt="">
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col col-sm-6 order-first order-sm-last align-self-center py-3">
+        <div class="row place-content-center">
+          <div class="col-12 col-sm-auto text-center">
+            <img src="../../../assets/images/logo/mts-circle.png" alt="MTS">
+          </div>
+          <div class="col-12 col-sm-auto text-center align-self-center">
+            <h3 class="m-0 rfs-banner fw-500">{{'website.ads' | translate}}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

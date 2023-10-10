@@ -1,0 +1,1457 @@
+<section class="sr-engine-sec">
+  <div class="container">
+    <div class="position-relative">
+      <!--visible spot on large Device-->
+      <div class="sr-brand" *ngIf="articleBrand1.length != 0">
+        <div class="sr-brand-item" *ngFor="let brand of articleBrand1 | slice:0:12; let i=index;"
+          [ngClass]="'sr-brand-item'+(i)">
+          <div *ngIf="!(brand.brandName === ''); else buySpot">
+            <a href="{{brand.brandUrl}}">
+              <div class="sr-brand-logo">
+                <img [src]="brand?.brandImage?.url" [alt]="brand?.brandImage?.alt" />
+              </div>
+              <div class="sr-brand-name">{{brand.brandName}}</div>
+            </a>
+          </div>
+        </div>
+        <ng-template #buySpot>
+          <div class="sr-brand-item btn">
+            <a routerLink="/buy">{{'searchBuyNow' | translate}}</a>
+          </div>
+        </ng-template>
+      </div>
+      <div class="sr-bar-with-ads">
+        <div class="sr-bar">
+          <div class="sr-box"> 
+            <ais-instantsearch [config]="config">
+              <ais-search-box  placeholder="{{'search' | translate}}" (input)="onSearchChange($event.target.value)"  [ngClass]="showResult? 'Show-autocomplete-box' : 'hide-autocomplete-box'"></ais-search-box>
+              <ais-hits class="autocomplete-box" *ngIf="showResult" id="autocomplete-box">
+                <ng-template let-hits="hits" let-results="results">
+                  <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                    [ngStyle]="{'order': OrderIndex + i}">
+                    <ul *ngIf="showResult">
+                      <li>
+                        <a [routerLink]="['/companies',hit.slug]" *ngIf="hit.type==='company'">
+                          <ais-highlight attribute="title" [hit]="hit"></ais-highlight>
+                        </a>
+                        <a [routerLink]="['/charities',hit.slug]" *ngIf="hit.type==='charity'">
+                          <ais-highlight attribute="bio" [hit]="hit"></ais-highlight>
+                        </a>
+                        <a [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='audio'">
+                          <ais-highlight attribute="title" [hit]="hit"></ais-highlight>
+                        </a>
+                        <a [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='video'">
+                          <ais-highlight attribute="title" [hit]="hit"></ais-highlight>
+                        </a>
+                        <a [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='text'">
+                          <ais-highlight attribute="title" [hit]="hit"></ais-highlight>
+                        </a>
+                        <a [routerLink]="['/',hit.slug]" *ngIf="hit.type==='author'">
+                          <ais-highlight attribute="fullname" [hit]="hit"></ais-highlight>
+                        </a>
+                        <a [routerLink]="['/fundraisers',hit.slug]" *ngIf="hit.type==='fundraiser'">
+                          <ais-highlight attribute="fundraiser" [hit]="hit"></ais-highlight>
+                        </a>
+  
+                        
+                        
+                        <!-- <a class="ais-Highlight">{{hit?.title}}</a> -->
+  
+                        <!-- <a [ngClass]="(CurrentValue === hit?.title )? 'highlightResult' : 'highlightResultBlack'" [routerLink]="['/companies',hit.slug]" *ngIf="hit.type==='company'">{{hit?.title}}</a>
+                        <a [ngClass]="(CurrentValue === hit?.bio )? 'highlightResult' : 'highlightResultBlack'" [routerLink]="['/charities',hit.slug]" *ngIf="hit.type==='charity'">{{hit?.bio}}</a>
+                        <a [ngClass]="(CurrentValue === hit?.title )? 'highlightResult' : 'highlightResultBlack'" [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='audio'">{{hit?.title}}</a>
+                        <a [ngClass]="(CurrentValue === hit?.title )? 'highlightResult' : 'highlightResultBlack'" [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='video'">{{hit?.title}}</a>
+                        <a [ngClass]="(CurrentValue === hit?.title )? 'highlightResult' : 'highlightResultBlack'" [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='text'">{{hit?.title}}</a>
+                        <a [ngClass]="(CurrentValue === hit?.fullname )? 'highlightResult' : 'highlightResultBlack'" [routerLink]="['/',hit.slug]" *ngIf="hit.type==='author'">{{hit?.fullname}}</a>
+                        <a [ngClass]="(CurrentValue === hit?.fundraiser )? 'highlightResult' : 'highlightResultBlack'" [routerLink]="['/fundraisers',hit.slug]" *ngIf="hit.type==='author'">{{hit?.fundraiser}}</a> -->
+  
+                      </li>
+                      
+                    </ul>
+                  </div>
+                  
+                </ng-template>
+              </ais-hits>       
+            </ais-instantsearch>      
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--End visible spot on large Device-->
+
+    <nz-tabset>
+      <nz-tab nzTitle="All">
+        <ais-instantsearch [config]="config">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/companies',hit.slug]" *ngIf="hit.type==='company'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.logo?.url" alt="hit?.logo?.alt"
+                        *ngIf="!(hit?.logo?.cloudinary_id); else companyLogo" />
+                      <ng-template #companyLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.logo?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.title}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }}<img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/company-icon.png" alt="company icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                  <div [routerLink]="['/charities',hit.slug]" *ngIf="hit.type==='charity'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.logo?.url" alt="hit?.logo?.alt"
+                        *ngIf="!(hit?.logo?.cloudinary_id); else charityLogo" />
+                      <ng-template #charityLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.logo?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.bio}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/charity-icon.png" alt="Charity icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='audio'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-play"></i>
+                        </div>
+                      </div>
+                      <div class="sr-article-detail">
+                        <div class="sr-article-txt">
+                          <h2>{{hit?.title}}</h2>
+                          <div class="category-article-readmore">
+                            <div>
+                              <button type="button" class="is-read-more">{{'ListenNow' | translate }}<img
+                                  src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                            </div>
+                            <div class="article-icon-main">
+                              <div class="article-icon">
+                                <i class="fas fa-volume-down"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="sr-avtar position-relative">
+                          <img [src]="hit?.author?.avatar?.url" [alt]="hit?.author?.avatar?.alt"
+                            onerror="this.src='assets/images/default-avatar.png'"
+                            *ngIf="hit?.author?.avatar; else defaultBlock" />
+                          <ng-template #defaultBlock><img src="assets/images/default-avatar.png" /></ng-template>
+                          <app-article-avatar [article]="hit"></app-article-avatar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='video'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-play"></i>
+                        </div>
+                      </div>
+                      <div class="sr-article-detail">
+                        <div class="sr-article-txt">
+                          <h2>{{hit?.title}}</h2>
+                          <div class="category-article-readmore">
+                            <div>
+                              <button type="button" class="is-read-more">{{'WatchNow' | translate }} <img
+                                  src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                            </div>
+                            <div class="article-icon-main">
+                              <div class="article-icon">
+                                <i class="fas fa-video"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="sr-avtar position-relative">
+                          <img [src]="hit?.author?.avatar?.url" [alt]="hit?.author?.avatar?.alt"
+                            onerror="this.src='assets/images/default-avatar.png'"
+                            *ngIf="hit?.author?.avatar; else defaultBlock" />
+                          <ng-template #defaultBlock><img src="assets/images/default-avatar.png" /></ng-template>
+                          <app-article-avatar [article]="hit"></app-article-avatar>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='text'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-angle-right"></i>
+                        </div>
+                      </div>
+                      <div class="sr-article-detail">
+                        <div class="sr-article-txt">
+                          <h2>{{hit?.title}}</h2>
+                          <div class="category-article-readmore">
+                            <div>
+                              <button type="button" class="is-read-more">{{'readMore' | translate }} <img
+                                  src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                            </div>
+                            <div class="article-icon-main">
+                              <div class="article-icon">
+                                <i class="far fa-file-alt"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="sr-avtar position-relative">
+                          <img [src]="hit?.author?.avatar.url" [alt]="hit?.author?.avatar?.alt"
+                            onerror="this.src='assets/images/default-avatar.png'"
+                            *ngIf="hit?.author?.avatar; else defaultBlock" />
+                          <ng-template #defaultBlock>
+                            <img src="assets/images/default-avatar.png" />
+                          </ng-template>
+                          <app-article-avatar [article]="hit"></app-article-avatar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div [routerLink]="['/',hit.slug]" *ngIf="hit.type==='author'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" [alt]="hit?.avatar?.alt" />
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/author-icon.png" alt="Author icon" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div [routerLink]="['/fundraisers',hit.slug]" *ngIf="hit.type==='fundraiser'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.title}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar">
+                        <img [src]="hit?.author?.avatar?.url" [alt]="hit?.author?.avatar?.alt"
+                          onerror="this.src='assets/images/default-avatar.png'"
+                          *ngIf="hit.author.avatar; else defaultBlock" />
+                        <ng-template #defaultBlock><img src="assets/images/default-avatar.png" /></ng-template>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                
+                <div class="clearfix"></div>
+              </div>
+              <ais-pagination></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Images">
+        <ais-instantsearch [config]="config">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/companies',hit.slug]" *ngIf="hit.type==='company'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.logo?.url" alt="hit?.logo?.alt"
+                        *ngIf="!(hit?.logo?.cloudinary_id); else companyLogo" />
+                      <ng-template #companyLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.logo?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div [routerLink]="['/charities',hit.slug]" *ngIf="hit.type==='charity'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.logo?.url" alt="hit?.logo?.alt"
+                        *ngIf="!(hit?.logo?.cloudinary_id); else charityLogo" />
+                      <ng-template #charityLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.logo?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='audio'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-play"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='video'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-play"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='text'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-angle-right"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div [routerLink]="['/',hit.slug]" *ngIf="hit.type==='author'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" [alt]="hit?.avatar?.alt" />
+                    </div>
+                  </div>
+
+                  <div [routerLink]="['/fundraisers',hit.slug]" *ngIf="hit.type==='fundraiser'">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                    </div>
+                  </div>
+
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Text">
+        <ais-instantsearch [config]="config">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='text'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-angle-right"></i>
+                        </div>
+                      </div>
+                      <div class="sr-article-detail">
+                        <div class="sr-article-txt">
+                          <h2>{{hit?.title}}</h2>
+                          <div class="category-article-readmore">
+                            <div>
+                              <button type="button" class="is-read-more">{{'readMore' | translate }} <img
+                                  src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                            </div>
+                            <div class="article-icon-main">
+                              <div class="article-icon">
+                                <i class="far fa-file-alt"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="sr-avtar position-relative">
+                          <img [src]="hit?.author?.avatar.url" [alt]="hit?.author?.avatar?.alt"
+                            onerror="this.src='assets/images/default-avatar.png'"
+                            *ngIf="hit?.author?.avatar; else defaultBlock" />
+                          <ng-template #defaultBlock><img src="assets/images/default-avatar.png" /></ng-template>
+                          <app-article-avatar [article]="hit"></app-article-avatar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Video">
+        <ais-instantsearch [config]="videoArticleConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='video'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-play"></i>
+                        </div>
+                      </div>
+                      <div class="sr-article-detail">
+                        <div class="sr-article-txt">
+                          <h2>{{hit?.title}}</h2>
+                          <div class="category-article-readmore">
+                            <div>
+                              <button type="button" class="is-read-more">{{'WatchNow' | translate }} <img
+                                  src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                            </div>
+                            <div class="article-icon-main">
+                              <div class="article-icon">
+                                <i class="fas fa-video"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="sr-avtar position-relative">
+                          <img [src]="hit?.author?.avatar?.url" [alt]="hit?.author?.avatar?.alt"
+                            onerror="this.src='assets/images/default-avatar.png'"
+                            *ngIf="hit?.author?.avatar; else defaultBlock" />
+                          <ng-template #defaultBlock><img src="assets/images/default-avatar.png" /></ng-template>
+                          <app-article-avatar [article]="hit"></app-article-avatar>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Audio">
+        <ais-instantsearch [config]="audioArticleConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">        
+                  <div [routerLink]="['/',hit.author.slug,hit.slug]" *ngIf="hit.type==='audio'"
+                    [ngClass]="hit.category.slug">
+                    <div class="item-card">
+                      <div class="sr-article-img">
+                        <img [src]="hit?.image?.url" [alt]="hit?.image?.alt" />
+                        <div class="article-image-icon">
+                          <i class="fas fa-play"></i>
+                        </div>
+                      </div>
+                      <div class="sr-article-detail">
+                        <div class="sr-article-txt">
+                          <h2>{{hit?.title}}</h2>
+                          <div class="category-article-readmore">
+                            <div>
+                              <button type="button" class="is-read-more">{{'ListenNow' | translate }}<img
+                                  src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                            </div>
+                            <div class="article-icon-main">
+                              <div class="article-icon">
+                                <i class="fas fa-volume-down"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="sr-avtar position-relative">
+                          <img [src]="hit?.author?.avatar?.url" [alt]="hit?.author?.avatar?.alt"
+                            onerror="this.src='assets/images/default-avatar.png'"
+                            *ngIf="hit?.author?.avatar; else defaultBlock" />
+                          <ng-template #defaultBlock><img src="assets/images/default-avatar.png" /></ng-template>
+                          <app-article-avatar [article]="hit"></app-article-avatar>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Company">
+        <ais-instantsearch [config]="companyConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/companies',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.logo?.url" alt="hit?.logo?.alt"
+                        *ngIf="!(hit?.logo?.cloudinary_id); else companyLogo" />
+                      <ng-template #companyLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.logo?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.title}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }}<img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/company-icon.png" alt="company icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Charity">
+        <ais-instantsearch [config]="charityConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/charities',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.logo?.url" alt="hit?.logo?.alt"
+                        *ngIf="!(hit?.logo?.cloudinary_id); else charityLogo" />
+                      <ng-template #charityLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.logo?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.bio}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/charity-icon.png" alt="Charity icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Fundraiser">
+        <ais-instantsearch [config]="fundraiserConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/fundraisers',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.logo?.url" alt="hit?.logo?.alt"
+                        *ngIf="!(hit?.logo?.cloudinary_id); else charityLogo" />
+                      <ng-template #charityLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.logo?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.title}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/fundraiser.svg" alt="Charity icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Bloggers">
+        <ais-instantsearch [config]="bloggersConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/blogger.svg" alt="blogger icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Vloggers">
+        <ais-instantsearch [config]="vloggersConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/vlogger.svg" alt="vlogger icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Podcasters">
+        <ais-instantsearch [config]="podcasterConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/podcaster.svg" alt="podcaster icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Guestposters">
+        <ais-instantsearch [config]="guestpostersConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/guest-post.svg" alt="guest-post icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Advisors">
+        <ais-instantsearch [config]="advisorsConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/advisor.svg" alt="advisor icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Politicians">
+        <ais-instantsearch [config]="politiciansConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/politician-white.svg" alt="politician icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Ecommerce">
+        <ais-instantsearch [config]="ecommerceConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/ecommerce-store.svg" alt="ecommerce icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Online Course">
+        <ais-instantsearch [config]="online_courseConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/online-course.svg" alt="online-course icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Services">
+        <ais-instantsearch [config]="servicesConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/services.svg" alt="services icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Jobs">
+        <ais-instantsearch [config]="jobsConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/jobs.svg" alt="jobs icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Host Event">
+        <ais-instantsearch [config]="host_eventConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/host-white.svg" alt="host-event icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Influencer Marketing">
+        <ais-instantsearch [config]="influencer_marketingConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/influencer-marketing.svg" alt="influencer-marketing icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Paid Premium Groups">
+        <ais-instantsearch [config]="paid_premium_groupsConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/paid.svg" alt="paid icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Restaurants">
+        <ais-instantsearch [config]="restaurantsConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/restaurent-white.svg" alt="restaurent icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Investments">
+        <ais-instantsearch [config]="investmentsConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/investments-white.svg" alt="investments icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+      <nz-tab nzTitle="Vacations Rentals">
+        <ais-instantsearch [config]="vacations_rentalsConfig">
+          <ais-configure [searchParameters]="searchParameters"></ais-configure>
+          <ais-hits>
+            <ng-template let-hits="hits" let-results="results">
+              <div class="sr-article-sec">
+                <div class="sr-article-sec-item" *ngFor="let hit of hits; let i=index"
+                  [ngStyle]="{'order': OrderIndex + i}">
+                  <div [routerLink]="['/',hit.slug]">
+                    <div class="sr-article-img">
+                      <img [src]="hit?.avatar?.url" alt="hit?.avatar?.alt"
+                        *ngIf="!(hit?.avatar?.cloudinary_id); else bloggerLogo" />
+                      <ng-template #bloggerLogo>
+                        <div class="cloudinary-img">
+                          <cl-image loading="lazy" public-id="{{hit?.avatar?.cloudinary_id}}" secure="true">
+                            <cl-transformation width="260" height="220" gravity="face" crop="thumb">
+                            </cl-transformation>
+                          </cl-image>
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="sr-article-detail">
+                      <div class="sr-article-txt">
+                        <h2>{{hit?.fullname}}</h2>
+                        <div class="category-article-readmore">
+                          <div>
+                            <button type="button" class="is-read-more">{{'showNow' | translate }} <img
+                                src="assets/images/read-more-icon-black.png" alt="Read More" /></button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sr-avtar bg-black">
+                        <img src="assets/images/vocational-rentals-white.svg" alt="vocational-rentals icon"
+                          onerror="this.src='assets/images/default-avatar.png'" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="hits.length === 0">
+                <h1 class="text-center">No data found</h1>
+              </div>
+              <ais-pagination *ngIf="hits.length != 0"></ais-pagination>
+            </ng-template>
+          </ais-hits>
+        </ais-instantsearch>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</section>

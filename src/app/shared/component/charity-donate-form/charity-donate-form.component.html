@@ -1,0 +1,57 @@
+<div class="charity-form">
+    <h2>{{ "donateCharityTitle" | translate }}</h2>
+
+    <form nz-form [formGroup]="donateForm" (ngSubmit)="submitForm()">
+        <nz-alert class="m-b-10" nzType="success" nzMessage="{{'donatedSuccessfully' | translate}}" nzShowIcon *ngIf="donateSuccess"></nz-alert>
+
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'donateFirstNameError' | translate}}">
+                <input type="text" nz-input formControlName="first_name" placeholder="{{'donateInputFirstName' | translate}}" id="firstName">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'donateLastNameError' | translate}}">
+                <input type="text" nz-input formControlName="last_name" placeholder="{{'donateInputLastName' | translate}}" id="lastName">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'donateEmailError' | translate}}">
+                <input type="email" nz-input formControlName="email" placeholder="{{'donateInputEmail' | translate}}" id="email">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'donateMobileError' | translate}}">
+                <input type="number" nz-input formControlName="mobile_number" placeholder="{{'donateInputPhoneNumber' | translate}}" id="phoneNumber">
+            </nz-form-control>
+        </nz-form-item>
+    
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'donateAmountError' | translate}}">
+                <nz-input-group nzAddOnBefore="$">
+                    <input type="number" nz-input formControlName="amount" placeholder="{{'donateInputAmount' | translate}}" id="amount">
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control nzErrorTip="{{'donateMessageError' | translate}}">
+                <textarea rows="3" nz-input formControlName="message" placeholder="{{'donateInputMessage' | translate}}" id="message"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+
+        <p *ngIf="showInvalidCardError" class="err-msg">{{ "invalidCardErrorMessage" | translate }}</p>
+
+        <div>
+            <nz-form-item>
+                <nz-form-control>
+                    <div class="text-center">
+                        <button nz-button class="is-login-btn mt-20" [nzLoading]="isFormSaving" [nzType]="'primary'">{{"leadSubmit" | translate}}</button>
+                    </div>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </form>
+</div>
